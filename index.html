@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ PUYO PUYO AMAZING ✨</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== TITLE SCREEN ===== -->
+  <div id="titleScreen" class="screen active">
+    <div class="title-logo">
+      <div class="title-main">✨ PUYO PUYO ✨</div>
+      <div class="title-sub">— AMAZING EDITION —</div>
+    </div>
+    <div class="title-puyos">
+      <div class="title-puyo">👁</div>
+      <div class="title-puyo">👁</div>
+      <div class="title-puyo">👁</div>
+      <div class="title-puyo">👁</div>
+      <div class="title-puyo">👁</div>
+    </div>
+    <div class="menu-buttons">
+      <button class="btn btn-primary" id="btnEndless">🎮 ENDLESS MODE</button>
+      <button class="btn btn-secondary" id="btnVsCPU">🤖 VS CPU</button>
+      <button class="btn btn-tertiary" id="btnHowToPlay">❓ HOW TO PLAY</button>
+    </div>
+    <div style="font-size:clamp(6px,0.9vw,8px); color:#555; margin-top:8px; letter-spacing:2px;">
+      HIGH SCORE: <span id="titleHighScore" style="color:#FFD700">0</span>
+    </div>
+  </div>
+
+  <!-- ===== HOW TO PLAY SCREEN ===== -->
+  <div id="howToPlayScreen" class="screen">
+    <div style="font-size:clamp(14px,2.5vw,22px); color:#FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); margin-bottom:20px; letter-spacing:3px;">
+      HOW TO PLAY
+    </div>
+    <div class="controls-help">
+      <div class="control-row">
+        <span class="control-key">← →</span>
+        <span class="control-desc">Move</span>
+      </div>
+      <div class="control-row">
+        <span class="control-key">↓</span>
+        <span class="control-desc">Soft Drop</span>
+      </div>
+      <div class="control-row">
+        <span class="control-key">↑ / SPC</span>
+        <span class="control-desc">Hard Drop</span>
+      </div>
+      <div class="control-row">
+        <span class="control-key">Z</span>
+        <span class="control-desc">Rotate CCW</span>
+      </div>
+      <div class="control-row">
+        <span class="control-key">X</span>
+        <span class="control-desc">Rotate CW</span>
+      </div>
+      <div class="control-row">
+        <span class="control-key">ESC</span>
+        <span class="control-desc">Pause</span>
+      </div>
+    </div>
+    <div style="max-width:480px; width:90%; margin-top:16px; font-size:clamp(6px,0.9vw,8px); color:#AAAACC; line-height:2; text-align:center; letter-spacing:1px;">
+      Connect 4 or more same-colored Puyos to pop them!<br>
+      Popping creates chain reactions — the more chains, the more points!<br>
+      In VS mode, chains send garbage Puyos to your opponent!<br>
+      Clear all Puyos for an ALL CLEAR bonus!
+    </div>
+    <button class="btn btn-primary" id="btnBackFromHelp" style="margin-top:20px; width:min(260px,80vw);">◀ BACK</button>
+  </div>
+
+  <!-- ===== VS CPU MODE SELECT ===== -->
+  <div id="vsSetupScreen" class="screen">
+    <div class="mode-title">VS CPU — SELECT DIFFICULTY</div>
+    <div class="difficulty-buttons">
+      <button class="diff-btn easy selected" id="diffEasy">😊 EASY</button>
+      <button class="diff-btn medium" id="diffMedium">😤 MEDIUM</button>
+      <button class="diff-btn hard" id="diffHard">💀 HARD</button>
+    </div>
+    <div style="margin-top:24px; display:flex; flex-direction:column; gap:12px; width:min(300px,85vw);">
+      <button class="btn btn-primary" id="btnStartVS">⚔ START BATTLE!</button>
+      <button class="btn btn-danger" id="btnBackFromVS">◀ BACK</button>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen">
+    <div class="game-wrapper" id="gameWrapper">
+
+      <!-- Player side panel -->
+      <div class="side-panel" id="playerSidePanel">
+        <div class="info-box">
+          <div class="info-box-title">SCORE</div>
+          <div class="info-box-value score-value" id="playerScore">0</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-title">BEST</div>
+          <div class="info-box-value" id="playerBest" style="font-size:clamp(8px,1.2vw,12px); color:#AAAAFF;">0</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-title">NEXT</div>
+          <div class="next-preview" id="playerNextPreview">
+            <canvas id="playerNextCanvas" width="60" height="120"></canvas>
+          </div>
+        </div>
+        <div class="info-box" id="playerChainBox" style="display:none;">
+          <div class="info-box-title chain-label">CHAIN</div>
+          <div class="info-box-value chain-display" id="playerChain">0</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-title">GARBAGE</div>
+          <div class="garbage-indicator" id="playerGarbageIndicator"></div>
+          <div style="font-size:clamp(8px,1.2vw,12px); color:#FF8888; margin-top:4px;" id="playerGarbageCount">0</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-title">LEVEL</div>
+          <div class="level-indicator" id="playerLevel">1</div>
+        </div>
+      </div>
+
+      <!-- Player board -->
+      <div class="board-panel">
+        <div class="board-label player-label" id="playerLabel">YOU</div>
+        <div class="board-frame player-board" id="playerBoardFrame">
+          <canvas id="playerCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Center panel (VS mode only) -->
+      <div class="center-panel" id="centerPanel" style="display:none;">
+        <div class="vs-text">VS</div>
+        <div class="difficulty-display" id="difficultyDisplay">EASY</div>
+      </div>
+
+      <!-- Enemy board (VS mode only) -->
+      <div class="board-panel" id="enemyBoardPanel" style="display:none;">
+        <div class="board-label enemy-label">CPU</div>
+        <div class="board-frame enemy-board" id="enemyBoardFrame">
+          <canvas id="enemyCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Enemy side panel (VS mode only) -->
+      <div class="side-panel" id="enemySidePanel" style="display:none;">
+        <div class="info-box">
+          <div class="info-box-title">SCORE</div>
+          <div class="info-box-value score-value" id="enemyScore">0</div>
+        </div>
+        <div class="info-box" id="enemyChainBox" style="display:none;">
+          <div class="info-box-title chain-label">CHAIN</div>
+          <div class="info-box-value chain-display" id="enemyChain">0</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-title">GARBAGE</div>
+          <div class="garbage-indicator" id="enemyGarbageIndicator"></div>
+          <div style="font-size:clamp(8px,1.2vw,12px); color:#FF8888; margin-top:4px;" id="enemyGarbageCount">0</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-title">NEXT</div>
+          <div class="next-preview" id="enemyNextPreview">
+            <canvas id="enemyNextCanvas" width="60" height="120"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== GAME OVER SCREEN ===== -->
+  <div id="gameOverScreen" class="screen">
+    <div class="game-over-title" id="gameOverTitle">GAME OVER</div>
+    <div class="final-score-label">FINAL SCORE</div>
+    <div class="final-score-value" id="finalScore">0</div>
+    <div class="high-score-badge" id="newHighScoreBadge" style="display:none;">🏆 NEW HIGH SCORE! 🏆</div>
+    <div style="display:flex; flex-direction:column; gap:12px; width:min(300px,85vw); margin-top:16px;">
+      <button class="btn btn-primary" id="btnPlayAgain">🔄 PLAY AGAIN</button>
+      <button class="btn btn-secondary" id="btnMainMenu">🏠 MAIN MENU</button>
+    </div>
+  </div>
+
+  <!-- ===== PAUSE OVERLAY ===== -->
+  <div id="pauseOverlay">
+    <div class="pause-title">⏸ PAUSED</div>
+    <div style="display:flex; flex-direction:column; gap:12px; width:min(280px,85vw);">
+      <button class="btn btn-primary" id="btnResume">▶ RESUME</button>
+      <button class="btn btn-danger" id="btnQuitToMenu">🏠 QUIT TO MENU</button>
+    </div>
+    <div style="font-size:clamp(6px,0.9vw,8px); color:#555; margin-top:16px; letter-spacing:2px;">
+      PRESS ESC TO RESUME
+    </div>
+  </div>
+
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
